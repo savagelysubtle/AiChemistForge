@@ -1,0 +1,72 @@
+{
+  "mcpServers": {
+    "Python": {
+      "command": "D:\\Coding\\AiChemistCodex\\AiChemistForge\\ToolRack\\Python\\start_mcp_server.bat",
+      "type": "stdio",
+      "cwd": "D:\\Coding\\AiChemistCodex\\AiChemistForge",
+      "env": {
+        "LOG_LEVEL": "INFO",
+        "TRUST": "true"
+      }
+    },
+    "aichemist-typescript": {
+      "command": "D:\\Coding\\AiChemistCodex\\AiChemistForge\\ToolRack\\TypeScript\\start_mcp_server.bat",
+      "type": "stdio",
+      "cwd": "D:\\Coding\\AiChemistCodex\\AiChemistForge",
+      "env": {
+        "NODE_ENV": "production",
+        "LOG_LEVEL": "INFO",
+        "BRAVE_API_KEY": "BSAZAYXacIJesn8f49flwne2vedGLbH",
+        "TRUST": "true"
+      }
+    },
+    "Rust": {
+      "command": "D:\\Coding\\AiChemistCodex\\AiChemistForge\\ToolRack\\Rust\\start_mcp_server.bat",
+      "type": "stdio",
+      "env": {
+        "RUST_LOG": "debug",
+        "TRUST": "true"
+      }
+    },
+    "obsidiangraph": {
+      "command": "D:\\Coding\\AiChemistCodex\\AiChemistForge\\ToolRack\\ObsidianGraph\\start_mcp_server.bat",
+      "type": "stdio",
+      "cwd": "D:\\Coding\\AiChemistCodex\\AiChemistForge",
+      "env": {
+        "NODE_ENV": "production",
+        "LOG_LEVEL": "INFO",
+        "TRUST": "true"
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "TRUST": "true"
+    },
+    "chroma": {
+      "command": "uvx",
+      "args": [
+        "chroma-mcp",
+        "--client-type",
+        "persistent",
+        "--data-dir",
+        "D:\\Coding\\AI_Dev_Hub\\AiResearchAgent\\data\\chroma_db"
+      ],
+      "type": "stdio",
+      "enabled": true,
+      "TRUST": "true"
+    },
+    "context": {
+      "fileName": ["GEMINI.md"],
+      "includeDirectories": [
+        "D:\\Coding\\web-ui",
+        "loadFromIncludeDirectories",
+        true,
+        "fileFiltering",
+        {
+          "respectGitIgnore": false
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+# Forbidden Directories List
+# These directories are blocked from MCP server access for security
+# The MCP server can access everything else on the filesystem
+# Edit this file to add/remove blocked directories
+
+# Windows System Directories (Recommended to keep blocked)
+C:\Windows
+C:\Windows\System32
+C:\Program Files
+C:\Program Files (x86)
+C:\ProgramData
+C:\System Volume Information
+C:\$Recycle.Bin
+C:\Recovery
+
+# User System Folders (Optional - uncomment to block)
+# C:\Users\Public
+
+# Add your custom blocked directories below
+# Examples:
+# D:\SensitiveProject
+# C:\CompanyData
+# C:\Users\YourName\PrivateStuff
