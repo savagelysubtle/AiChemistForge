@@ -1,229 +1,425 @@
 # AiChemistForge - Python Unified MCP Server
 
-A comprehensive Model Context Protocol (MCP) server built with Python 3.13+, providing a collection of organized tools designed to assist AI development workflows. This server is part of the larger AiChemistForge project but can be run and developed as a standalone service.
+A comprehensive Model Context Protocol (MCP) server built with Python 3.13+ and FastMCP, providing a collection of organized tools designed to assist AI development workflows. This server is part of the larger AiChemistForge project but can be run and developed as a standalone service.
 
 ## Features
 
-- **Modular Architecture**: Clean separation between the core server infrastructure and individual tools.
-- **Auto-Discovery**: Tools are automatically discovered and registered by the server on startup.
-- **Type Safety**: Leverages Python's type hinting for improved code quality and maintainability. Pydantic is used for data validation where applicable.
-- **Robust Error Handling**: Designed with comprehensive error handling and detailed logging capabilities.
-- **Extensible**: Easily add new tools and tool categories to expand functionality.
-- **Configuration Management**: Supports environment variables for flexible configuration (see `.env.example`).
-- **Stdio Transport**: Primarily uses stdio for communication, making it suitable for local development and integration with tools like Cursor.
+- **FastMCP-Based**: Built on FastMCP 2.0+ for robust MCP protocol handling
+- **Auto-Discovery**: Tools are automatically discovered and registered via registration functions
+- **Type Safety**: Full type hints with Pydantic validation for all tool inputs
+- **Robust Error Handling**: Comprehensive error handling following MCP transport best practices
+- **Lifecycle Management**: Startup/shutdown hooks for resource management
+- **Metrics & Tracing**: Built-in metrics collection and request tracing (configurable)
+- **Middleware Support**: Rate limiting, timing, and extensible middleware chain
+- **Caching**: LRU cache with TTL support for improved performance
+- **Stdio Transport**: Primary transport mode optimized for local development and Cursor integration
+- **HTTP Transport**: Optional HTTP/SSE transport for web access
 
 ## Current Tools
 
-This server can host a variety of tools. As of the last update, it includes:
-
-### Database Tools
-- **`query_cursor_database`**: Allows querying and managing Cursor IDE's internal state databases.
-  - List projects and workspaces.
-  - Query chat history and composer information.
-  - Access project-specific databases.
-
 ### Filesystem Tools
-- **`file_tree`**: Generates a tree-like representation of a directory's structure.
-- **`codebase_ingest`**: Processes an entire codebase to prepare it for Large Language Model (LLM) context.
 
-*(This list can be expanded as more tools are added. Refer to the `src/unified_mcp_server/tools/` directory for current implementations.)*
+- **`file_tree`**: Generate comprehensive file tree structures with LLM optimization
+  - Token counting and complexity analysis
+  - Component extraction (functions, classes, methods)
+  - Pattern filtering (include/exclude glob patterns)
+  - Multiple output formats (tree, JSON, flat)
+  - Smart chunking for large codebases
+  - Language detection and metadata
+
+- **`codebase_ingest`**: Process entire codebases for LLM context preparation
+  - Intelligent file chunking strategies
+  - Component extraction and complexity analysis
+  - Language detection and statistics
+  - Configurable file size limits and patterns
+  - Structured or markdown output formats
+  - LLM-optimized formatting with emojis and summaries
+
+### Reasoning Tools
+
+- **`decompose_and_think`**: Decompose complex problems with sequential thinking
+  - Problem decomposition by domain (technical, analytical, creative, general)
+  - Dependency analysis between sub-problems
+  - Sequential thinking steps for each sub-problem
+  - Critical path identification and bottleneck detection
+  - Optional reflection and success criteria evaluation
+  - Execution order recommendations
+
+- **`analyze_dependencies`**: Analyze component dependencies and relationships
+  - Dependency graph construction
+  - Circular dependency detection
+  - Critical path analysis
+  - Bottleneck identification
+  - Execution order recommendations
+  - Relationship types: `depends_on`, `blocks`, `enables`, `integrates_with`
 
 ## Installation
 
 ### Prerequisites
+
 - Python 3.13 or newer
 - [UV Package Manager](https://github.com/astral-sh/uv)
 
 ### Setup Instructions
 
-1.  **Clone the Server Directory (if not already part of a larger clone):**
-    If you are treating this server as a standalone project, you would clone its specific directory or the parent AiChemistForge repository and navigate here.
-    ```bash
-    # Example if AiChemistForge is cloned:
-    # git clone https://github.com/your-username/AiChemistForge.git
-    cd AiChemistForge/ToolRack/Python
-    ```
+1. **Navigate to the Server Directory:**
+   ```bash
+   cd AiChemistForge/ToolRack/Python
+   ```
 
-2.  **Create and Activate a Virtual Environment (Recommended):**
-    While UV can manage global tools, it's good practice for project isolation.
-    ```bash
-    python -m venv .venv
-    # On Windows
-    .venv\\Scripts\\activate
-    # On macOS/Linux
-    source .venv/bin/activate
-    ```
+2. **Install Dependencies using UV:**
+   ```bash
+   uv sync --all-groups
+   ```
+   This installs all dependencies including development tools (pytest, ruff, mypy).
 
-3.  **Install Dependencies using UV:**
-    This command installs all dependencies defined in `pyproject.toml`, including those for different groups (e.g., `dev` dependencies).
-    ```bash
-    uv sync --all-groups
-    ```
-    This step is crucial and ensures that all necessary packages, including the `unified_mcp_server` itself and its dependencies, are installed correctly. The `start_mcp_server.bat` script relies on `uv` being available within the environment (often via this installation step creating a shim or by having `uv` installed globally).
+3. **Set up Environment Variables (Optional):**
+   Create a `.env` file in the project root with your configuration:
+   ```bash
+   # Server Configuration
+   MCP_SERVER_NAME=aichemistforge-mcp-server
+   MCP_LOG_LEVEL=INFO
+   MCP_TRANSPORT_TYPE=stdio
 
-4.  **Set up Environment Variables (Optional but Recommended):**
-    Copy the `.env.example` file to `.env` and customize the settings as needed.
-    ```bash
-    copy .env.example .env  # Windows
-    # cp .env.example .env    # macOS/Linux
-    ```
-    Review and edit the `.env` file to configure server name, log levels, paths, etc.
+   # File System Settings
+   MAX_FILE_SIZE=10000000
+   ALLOWED_PATHS=
+
+   # Performance Tuning
+   OPERATION_TIMEOUT=30.0
+   CACHE_MAX_SIZE=1000
+   CACHE_DEFAULT_TTL=300.0
+
+   # Monitoring (optional)
+   METRICS_ENABLED=true
+   TRACING_ENABLED=true
+
+   # Middleware (optional)
+   RATE_LIMIT_ENABLED=false
+   RATE_LIMIT_MAX_REQUESTS=100
+   RATE_LIMIT_WINDOW_SECONDS=60.0
+   ```
 
 ## Usage
 
 ### Running the Server
 
-There are a couple of ways to run the MCP server:
+#### Windows (Batch Script)
 
-1.  **Using the Batch Script (Windows):**
-    The `start_mcp_server.bat` script handles setting up the environment and running the server.
-    ```bash
-    start_mcp_server.bat
-    ```
-    You can also run it in debug mode for more verbose logging:
-    ```bash
-    start_mcp_server.bat --debug
-    ```
-    This script ensures `PYTHONPATH` is set correctly and uses `uv run` to execute the server module.
+```bash
+# Standard mode
+start_mcp_server.bat
 
-2.  **Running Manually with UV (Cross-Platform):**
-    If you have activated a virtual environment where `uv` and project dependencies are installed:
-    ```bash
-    uv run python -m unified_mcp_server.main --stdio
-    ```
-    To enable debug logging similar to the batch script's debug mode, you might need to set the `MCP_LOG_LEVEL` environment variable to `DEBUG` (e.g., in your `.env` file or directly in the command line if supported by your shell).
+# Debug mode (verbose logging)
+start_mcp_server.bat --debug
+```
+
+#### Cross-Platform (Manual)
+
+```bash
+# Stdio transport (default, recommended for MCP clients)
+uv run python -m unified_mcp_server.main --stdio
+
+# Debug mode
+uv run python -m unified_mcp_server.main --stdio --debug
+
+# HTTP transport (for web access)
+uv run python -m unified_mcp_server.main --http --host localhost --port 9876
+
+# SSE transport (legacy)
+uv run python -m unified_mcp_server.main --sse --host localhost --port 9876
+```
 
 ### Connecting from an MCP Client (e.g., Cursor)
 
-To make this server accessible to an MCP client like Cursor:
+1. **Open Cursor Settings:**
+   Navigate to `Features > Model Context Protocol`
 
-1.  **Cursor Settings:**
-    Open Cursor settings and navigate to `Features > Model Context Protocol`.
+2. **Add Server Configuration:**
+   ```json
+   {
+     "mcpServers": {
+       "aichemistforge-python": {
+         "command": "D:\\path\\to\\AiChemistForge\\ToolRack\\Python\\start_mcp_server.bat",
+         "cwd": "D:\\path\\to\\AiChemistForge\\ToolRack\\Python"
+       }
+     }
+   }
+   ```
 
-2.  **Add Server Configuration:**
-    Add a new server configuration pointing to the `start_mcp_server.bat` script (or the manual command if you prefer, though the batch script is often more robust for pathing).
-    *   **Command:** Absolute path to `start_mcp_server.bat` (e.g., `D:\\Coding\\AiChemistCodex\\AiChemistForge\\ToolRack\\Python\\start_mcp_server.bat`).
-    *   **CWD (Current Working Directory):** Absolute path to the `ToolRack/Python/` directory (e.g., `D:\\Coding\\AiChemistCodex\\AiChemistForge\\ToolRack\\Python`).
+   **Note:** Use absolute paths with double backslashes (`\\`) on Windows.
 
-    Example JSON for Cursor settings:
-    ```json
-    {
-      "mcpServers": {
-        "aichemistforge-python-server": { // Choose a unique name
-          "command": "D:\\path\\to\\AiChemistForge\\ToolRack\\Python\\start_mcp_server.bat",
-          "cwd": "D:\\path\\to\\AiChemistForge\\ToolRack\\Python"
-        }
-      }
-    }
-    ```
-    **Note:**
-    *   Replace `D:\\path\\to\\` with the actual absolute path to your `AiChemistForge` directory.
-    *   Use double backslashes (`\\\\`) for paths in JSON on Windows.
-    *   Ensure there are no spaces in the path if possible, as it can sometimes cause issues with command execution in some environments.
+3. **Project-Level Configuration (Optional):**
+   Create `.cursor/mcp.json` in your project root with the same configuration.
 
-3.  **Project-Level MCP (If applicable):**
-    If you prefer project-specific MCP configurations in Cursor, enable "Allow Project Level MCP Servers" in Cursor's settings. Then, you can create a `.cursor/mcp.json` file in your target project with a similar configuration.
+### Available Tools After Connection
 
-### Available Tools After Connection (Examples)
-Once connected, tools provided by this server will be available in the client:
-- `query_cursor_database`
-- `file_tree`
-- `codebase_ingest`
-*(This list will reflect the tools currently enabled and discovered by the server.)*
+Once connected, the following tools will be available:
+- `file_tree` - Comprehensive file tree generation
+- `codebase_ingest` - Codebase ingestion for LLM context
+- `decompose_and_think` - Problem decomposition with sequential thinking
+- `analyze_dependencies` - Component dependency analysis
 
-### Configuration
-The server behavior can be customized through environment variables. Key variables are listed in `.env.example`. These include:
-- `MCP_SERVER_NAME`: Name of the MCP server.
-- `MCP_LOG_LEVEL`: Logging verbosity (e.g., `DEBUG`, `INFO`).
-- `MCP_TRANSPORT_TYPE`: Communication transport (typically `stdio`).
-- `CURSOR_PATH`: Path to the Cursor application data directory (often auto-detected).
-- `PROJECT_DIRS`: Comma-separated list of additional project directories for tools like `query_cursor_database`.
-- `MAX_FILE_SIZE`: Maximum file size for file operations.
-- `MAX_QUERY_RESULTS`: Maximum results for database queries.
+## Configuration
+
+The server supports extensive configuration via environment variables. Key settings:
+
+### Server Settings
+- `MCP_SERVER_NAME`: Server name (default: `aichemistforge-mcp-server`)
+- `MCP_LOG_LEVEL`: Logging level - `DEBUG`, `INFO`, `WARNING`, `ERROR` (default: `INFO`)
+- `MCP_TRANSPORT_TYPE`: Transport type - `stdio`, `http`, `sse` (default: `stdio`)
+
+### File System Settings
+- `MAX_FILE_SIZE`: Maximum file size in bytes (default: `10000000` = 10MB)
+- `ALLOWED_PATHS`: Comma-separated list of allowed paths (empty = all allowed)
+- `ENABLE_PATH_TRAVERSAL_CHECK`: Enable path traversal protection (default: `true`)
+
+### Performance Tuning
+- `OPERATION_TIMEOUT`: Default timeout for operations in seconds (default: `30.0`)
+- `RETRY_MAX_ATTEMPTS`: Maximum retry attempts (default: `3`)
+- `MAX_CONCURRENT_OPERATIONS`: Maximum concurrent operations (default: `10`)
+- `CACHE_MAX_SIZE`: Maximum cache entries (default: `1000`)
+- `CACHE_DEFAULT_TTL`: Default cache TTL in seconds (default: `300.0`)
+
+### Monitoring
+- `METRICS_ENABLED`: Enable metrics collection (default: `true`)
+- `TRACING_ENABLED`: Enable request tracing (default: `true`)
+- `HEALTH_CHECK_ENABLED`: Enable health check endpoint (default: `true`)
+
+### Middleware
+- `RATE_LIMIT_ENABLED`: Enable rate limiting (default: `false`)
+- `RATE_LIMIT_MAX_REQUESTS`: Maximum requests per window (default: `100`)
+- `RATE_LIMIT_WINDOW_SECONDS`: Rate limit window in seconds (default: `60.0`)
+- `RATE_LIMIT_PER_TOOL`: Apply rate limit per tool vs global (default: `false`)
 
 ## Development
 
 ### Project Structure
-The server code is primarily located within the `src/unified_mcp_server` directory:
+
 ```
 src/unified_mcp_server/
-├── server/              # Core server infrastructure (config, logging, main server logic)
-│   ├── config.py
-│   ├── logging.py
-│   └── mcp_server.py
-├── tools/               # Tool implementations, organized by category
-│   ├── base.py          # BaseTool class for all tools
-│   ├── registry.py      # Tool discovery and registration mechanism
-│   ├── database/        # Example: Database-related tools
-│   └── filesystem/      # Example: Filesystem-related tools
-└── main.py              # Main entry point for running the server
+├── main.py                 # Server entry point with FastMCP initialization
+├── server/                 # Core server infrastructure
+│   ├── config.py          # Configuration management (Pydantic models)
+│   ├── logging.py         # Contextual logging setup
+│   ├── lifecycle.py        # Startup/shutdown lifecycle management
+│   ├── metrics.py          # Metrics collection
+│   ├── tracing.py          # Request tracing
+│   ├── middleware.py       # Middleware chain (rate limiting, timing)
+│   ├── resources.py        # Resource pool management
+│   ├── context.py          # Context management
+│   └── error_handling.py   # Error handling utilities
+├── tools/                  # Tool implementations
+│   ├── discovery.py        # Automatic tool discovery system
+│   ├── filesystem/         # Filesystem tools
+│   │   ├── file_tree_tool.py
+│   │   └── codebase_ingest_tool.py
+│   ├── reasoning/          # Reasoning and analysis tools
+│   │   ├── decompose_and_think_tool.py
+│   │   ├── analyze_dependencies_tool.py
+│   │   ├── helpers.py      # Shared helper functions
+│   │   └── validation.py   # Input validation utilities
+│   └── code_execution/     # Code execution tools (if any)
+└── utils/                  # Utility modules
+    ├── caching.py          # LRU cache with TTL
+    ├── composition.py      # Tool composition utilities
+    ├── exceptions.py       # Custom exception classes
+    ├── security.py         # Security utilities (path validation, sanitization)
+    └── validators.py        # Input validation helpers
 ```
 
 ### Adding New Tools
 
-1.  **Create a Tool Class:**
-    Define a new Python class that inherits from `unified_mcp_server.tools.base.BaseTool`.
-    ```python
-    from ..base import BaseTool
-    from pydantic import BaseModel, Field # For input schema validation
+Tools are automatically discovered via registration functions. To add a new tool:
 
-    class MyToolInput(BaseModel):
-        param1: str = Field(description="Description for parameter 1")
-        param2: int = Field(default=0, description="Optional parameter 2")
+1. **Create a Registration Function:**
+   ```python
+   from fastmcp import FastMCP
+   from pydantic import BaseModel, Field
+   from typing import Dict, Any
+   import logging
 
-    class MyTool(BaseTool):
-        def __init__(self):
-            super().__init__(
-                name="my_tool_name", # Unique name for the tool
-                description="A clear description of what my tool does.",
-                input_schema=MyToolInput.model_json_schema() # Generate schema from Pydantic model
-            )
+   logger = logging.getLogger("mcp.tools.my_category")
 
-        async def execute(self, validated_args: MyToolInput) -> dict:
-            # Your tool's logic here, using validated_args
-            # Example: result = await some_async_operation(validated_args.param1)
-            return {"message": f"Tool executed with {validated_args.param1} and {validated_args.param2}"}
+   def register_my_tool(mcp: FastMCP) -> None:
+       """Register the my_tool with the FastMCP instance."""
 
-    ```
+       @mcp.tool()
+       async def my_tool(
+           param1: str = Field(description="Description for parameter 1"),
+           param2: int = Field(default=0, description="Optional parameter 2"),
+       ) -> Dict[str, Any]:
+           """Tool description for the MCP client."""
+           logger.debug(f"Executing my_tool with param1={param1}")
 
-2.  **Place the Tool File:**
-    Save your new tool file (e.g., `my_new_tool.py`) into an appropriate subdirectory within `src/unified_mcp_server/tools/` (e.g., `src/unified_mcp_server/tools/custom/`). Create a new subdirectory if a suitable category doesn't exist. Ensure the subdirectory has an `__init__.py` file so it's recognized as a package.
+           # Your tool logic here
+           result = await some_async_operation(param1, param2)
 
-3.  **Automatic Discovery:**
-    The `ToolRegistry` is designed to automatically discover and load tools from these directories. Ensure your tool class is imported in the `__init__.py` of its respective category folder or that the tool module itself is discoverable.
+           return {
+               "success": True,
+               "result": result,
+               "tool": "my_tool",
+           }
+   ```
+
+2. **Place the Tool File:**
+   Save your tool file (e.g., `my_tool.py`) in an appropriate category directory:
+   - `src/unified_mcp_server/tools/filesystem/` - Filesystem operations
+   - `src/unified_mcp_server/tools/reasoning/` - Analysis and reasoning
+   - `src/unified_mcp_server/tools/custom/` - Create new category as needed
+
+3. **Automatic Discovery:**
+   The discovery system (`tools/discovery.py`) automatically finds functions matching the pattern `register_*_tool` or `register_*_tools` and calls them during server startup. No manual registration needed!
+
+4. **Export in `__init__.py` (Optional):**
+   For better organization, you can export the registration function:
+   ```python
+   # tools/my_category/__init__.py
+   from .my_tool import register_my_tool
+
+   __all__ = ["register_my_tool"]
+   ```
 
 ### Testing
-Basic tests can be run to ensure server components are functioning.
+
+Run tests using pytest:
+
 ```bash
-# Example: If you have a test_server.py script
-uv run python test_server.py
+# Run all tests
+uv run pytest tests/ -v
+
+# Run specific test file
+uv run pytest tests/test_specific_tool.py -v
+
+# Run with coverage
+uv run pytest tests/ --cov=unified_mcp_server --cov-report=html
+
+# Test server connection
+uv run python test_mcp_server.py
 ```
-For more detailed testing or specific tool tests, you would typically use a test runner like `pytest`. Ensure development dependencies are installed (`uv sync --all-groups` should cover this if `pytest` is in `dev-dependencies`).
+
+### Code Quality
+
+The project uses Ruff for formatting and linting, and Mypy for type checking:
+
+```bash
+# Format code
+uv run ruff format .
+
+# Lint code
+uv run ruff check .
+
+# Fix auto-fixable issues
+uv run ruff check --fix .
+
+# Type checking
+uv run mypy src/
+```
 
 ## Architecture
 
 ### Core Components
-- **`UnifiedMCPServer` (in `mcp_server.py`):** The main class that handles the MCP protocol, connection management, and message dispatching.
-- **`ToolRegistry` (in `registry.py`):** Responsible for discovering, loading, and managing all available tools.
-- **`BaseTool` (in `tools/base.py`):** An abstract base class that all tools must inherit from, defining a common interface for tool execution and schema definition.
-- **`ServerConfig` (in `config.py`):** Manages server configuration, primarily loading settings from environment variables (via `.env` file or system environment).
+
+- **FastMCP Server** (`main.py`): FastMCP instance handles all MCP protocol communication
+- **Tool Discovery** (`tools/discovery.py`): Automatically discovers and registers tools via registration functions
+- **Server Config** (`server/config.py`): Pydantic-based configuration with environment variable support
+- **Lifecycle Manager** (`server/lifecycle.py`): Manages startup/shutdown hooks for resource initialization
+- **Metrics Collector** (`server/metrics.py`): Collects performance metrics (configurable)
+- **Tracer** (`server/tracing.py`): Request tracing with correlation IDs (configurable)
+- **Middleware Chain** (`server/middleware.py`): Extensible middleware for rate limiting, timing, etc.
+- **Cache Manager** (`utils/caching.py`): LRU cache with TTL for performance optimization
 
 ### Design Principles
-- **Separation of Concerns**: The server's operational logic is distinct from the specific functionalities of the tools it hosts.
-- **Type Safety**: Extensive use of Python type hints helps in maintaining code quality and catching errors early. Pydantic models are used for schema validation.
-- **Extensibility**: The system is designed to be easily extendable with new tools without requiring modifications to the core server logic.
-- **Configuration over Code**: Server behavior and tool parameters are managed through configuration where possible, promoting flexibility.
+
+- **FastMCP Integration**: Leverages FastMCP decorators for tool registration (no custom BaseTool class)
+- **Auto-Discovery**: Tools are automatically discovered via function naming conventions
+- **Type Safety**: Full type hints with Pydantic validation for all inputs
+- **Error Handling**: Comprehensive error handling following MCP transport best practices
+- **Stdio Logging**: All logs go to stderr, JSON-RPC to stdout per MCP guidelines
+- **Resource Management**: Proper lifecycle management with startup/shutdown hooks
+- **Extensibility**: Easy to add new tools without modifying core server code
+- **Configuration-Driven**: Behavior controlled via environment variables
+
+### Transport Modes
+
+- **Stdio** (Default): Standard input/output for MCP clients like Cursor
+- **HTTP** (Streamable): Full bidirectional streaming over HTTP
+- **SSE** (Legacy): Server-Sent Events transport (deprecated, use HTTP instead)
+
+## Utilities
+
+The server includes several utility modules:
+
+- **`utils/caching.py`**: LRU cache with TTL support for caching tool results
+- **`utils/security.py`**: Path validation, sanitization, and security checks
+- **`utils/validators.py`**: Input validation helpers
+- **`utils/composition.py`**: Tool composition and workflow utilities
+- **`utils/exceptions.py`**: Custom exception classes for better error handling
+
+## Troubleshooting
+
+### Server Won't Start
+
+1. **Check Python Version:**
+   ```bash
+   python --version  # Should be 3.13+
+   ```
+
+2. **Verify Dependencies:**
+   ```bash
+   uv sync --all-groups
+   ```
+
+3. **Check Logs:**
+   Server logs appear on stderr. Check for import errors or configuration issues.
+
+### Tools Not Discovered
+
+1. **Verify Function Naming:**
+   Registration functions must match pattern: `register_*_tool` or `register_*_tools`
+
+2. **Check Module Imports:**
+   Ensure the tool module is importable and doesn't have syntax errors
+
+3. **Enable Debug Logging:**
+   ```bash
+   start_mcp_server.bat --debug
+   ```
+   Look for "Discovered registration function" messages
+
+### Connection Issues
+
+1. **Verify Paths:**
+   Use absolute paths in MCP client configuration
+
+2. **Check Permissions:**
+   Ensure the server script has execute permissions
+
+3. **Test Manually:**
+   Run the server manually to verify it starts correctly:
+   ```bash
+   uv run python -m unified_mcp_server.main --stdio
+   ```
 
 ## Contributing
-If you wish to contribute to this Python MCP server:
-1. Adhere to the existing code structure and design patterns.
-2. Ensure comprehensive type hints for all new code.
-3. Implement proper error handling and logging for new functionalities.
-4. Add tests for any new tools or significant changes to the core.
-5. Update documentation (like this README) if your changes affect installation, usage, or add new tools/features.
+
+When contributing to this Python MCP server:
+
+1. **Follow Code Style**: Use Ruff formatter (line length: 88)
+2. **Type Hints**: All functions must have complete type hints
+3. **Error Handling**: Implement comprehensive error handling per MCP guidelines
+4. **Logging**: Use structured logging to stderr (never stdout)
+5. **Testing**: Add tests for new tools in `tests/`
+6. **Documentation**: Update this README for new tools or features
+7. **Tool Registration**: Use the `register_*_tool` function pattern for auto-discovery
 
 ## License
-This project is typically licensed under an open-source license (e.g., MIT). Refer to the `LICENSE` file in the root of the AiChemistForge repository for specific details.
+
+This project is licensed under the MIT License. Refer to the `LICENSE` file in the root of the AiChemistForge repository for details.
 
 ## Support
-For issues, questions, or contributions, please refer to the issue tracker or contribution guidelines of the parent AiChemistForge project.
+
+For issues, questions, or contributions:
+- Check the parent AiChemistForge repository for issue tracking
+- Review MCP documentation for protocol details
+- See `CLAUDE.md` in the repository root for development guidelines

@@ -1,0 +1,79 @@
+{
+  "mcpServers": {
+    "Python_BatchFile": {
+      "command": "C:\\path\\to\\AiChemistForge\\ToolRack\\Python\\start_mcp_server.bat",
+      "type": "stdio",
+      "env": {
+        "LOG_LEVEL": "INFO",
+        "TRUST": "true"
+      }
+    },
+    "Python_UvDirect": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "C:\\path\\to\\AiChemistForge\\ToolRack\\Python",
+        "run",
+        "python",
+        "-m",
+        "unified_mcp_server.main",
+        "--stdio"
+      ],
+      "type": "stdio",
+      "env": {
+        "PYTHONPATH": "src",
+        "LOG_LEVEL": "INFO",
+        "TRUST": "true"
+      }
+    },
+    "TypeScript_BatchFile": {
+      "command": "C:\\path\\to\\AiChemistForge\\ToolRack\\TypeScript\\start_mcp_server.bat",
+      "type": "stdio",
+      "timeout": 120000,
+      "env": {
+        "NODE_ENV": "production",
+        "LOG_LEVEL": "INFO",
+        "TRUST": "true"
+      }
+    },
+    "TypeScript_NodeDirect": {
+      "command": "node",
+      "args": [
+        "C:\\path\\to\\AiChemistForge\\ToolRack\\TypeScript\\dist\\server\\server.js"
+      ],
+      "type": "stdio",
+      "timeout": 120000,
+      "env": {
+        "NODE_ENV": "production",
+        "LOG_LEVEL": "INFO",
+        "TRUST": "true",
+        "BRAVE_API_KEY": "your_brave_api_key_here",
+        "PERPLEXITY_API_KEY": "your_perplexity_api_key_here"
+      }
+    },
+    "TypeScript_BunDirect": {
+      "command": "bun",
+      "args": [
+        "C:\\path\\to\\AiChemistForge\\ToolRack\\TypeScript\\dist\\server\\server.js"
+      ],
+      "type": "stdio",
+      "timeout": 120000,
+      "env": {
+        "NODE_ENV": "production",
+        "LOG_LEVEL": "INFO",
+        "TRUST": "true",
+        "BRAVE_API_KEY": "your_brave_api_key_here",
+        "PERPLEXITY_API_KEY": "your_perplexity_api_key_here"
+      }
+    },
+    "Rust": {
+      "command": "C:\\path\\to\\AiChemistForge\\ToolRack\\Rust\\start_mcp_server.bat",
+      "args": ["--writable", "C:\\path\\to\\allowed\\directory"],
+      "type": "stdio",
+      "env": {
+        "RUST_LOG": "info",
+        "TRUST": "true"
+      }
+    }
+  }
+}
