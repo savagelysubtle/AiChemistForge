@@ -1,9 +1,20 @@
 # 🧪 AiChemist Forge
 
+![AiChemist Forge Logo](docs/logo.svg)
+
+**Unified MCP Server Development Workspace**
+
+[![MCP](https://img.shields.io/badge/MCP-Protocol-blue)](https://modelcontextprotocol.io)
+[![Python](https://img.shields.io/badge/Python-3.13+-blue)](https://python.org)
+[![Rust](https://img.shields.io/badge/Rust-1.70+-orange)](https://rust-lang.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-18+-blue)](https://typescriptlang.org)
+[![PayPal](https://img.shields.io/badge/PayPal-Support-blue.svg)](https://paypal.me/safeappealnavigator)
+
 A unified workspace for developing Model Context Protocol (MCP) servers with
-organized tooling for AI development workflows. This project provides
-high-performance MCP servers in Python, Rust, and TypeScript, each optimized for
-different use cases.
+organized tooling for AI development workflows.
+
+This project provides high-performance MCP servers in Python, Rust, and
+TypeScript, each optimized for different use cases.
 
 ## 🏗️ Architecture
 

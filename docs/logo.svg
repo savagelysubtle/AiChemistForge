@@ -1,0 +1,184 @@
+<svg width="550" height="160" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 550 160">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#357ABD;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="metalGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8E8E8;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#C0C0C0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#909090;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="anvilGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#D5D5D5;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#A0A0A0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#707070;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="fireGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFF3E0;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#FFEB3B;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#FF9800;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF5722;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="hotMetalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF6F00;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#FF8F00;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#FFB300;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFD54F;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="emberGlow">
+      <stop offset="0%" style="stop-color:#FFF3E0;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FF9800;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#FF5722;stop-opacity:0" />
+    </radialGradient>
+
+    <!-- Filters -->
+    <filter id="shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="2" dy="3"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.4"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="550" height="160" fill="#FAFBFC" rx="12"/>
+
+  <!-- Forge Icon -->
+  <g transform="translate(40, 45)">
+
+    <!-- Anvil -->
+    <g filter="url(#shadow)">
+      <!-- Base -->
+      <path d="M 20 85 L 100 85 L 108 78 L 108 68 L 100 62 L 20 62 Z"
+            fill="url(#anvilGrad)" stroke="#505050" stroke-width="2.5"/>
+
+      <!-- Body -->
+      <path d="M 28 62 L 92 62 L 96 54 L 96 44 L 92 40 L 28 40 Z"
+            fill="url(#metalGrad)" stroke="#606060" stroke-width="2.5"/>
+
+      <!-- Horn (left) -->
+      <path d="M 28 40 L 20 40 L 16 36 L 16 30 L 20 26 L 28 26 Z"
+            fill="url(#metalGrad)" stroke="#606060" stroke-width="2"/>
+
+      <!-- Horn (right) -->
+      <path d="M 92 40 L 100 40 L 104 36 L 104 30 L 100 26 L 92 26 Z"
+            fill="url(#metalGrad)" stroke="#606060" stroke-width="2"/>
+
+      <!-- Face -->
+      <rect x="45" y="36" width="30" height="4" fill="#B8B8B8" stroke="#505050" stroke-width="1"/>
+      <rect x="47" y="37" width="26" height="1.5" fill="#E0E0E0" opacity="0.6"/>
+    </g>
+
+    <!-- Hot Metal Bar on Anvil (glowing) -->
+    <g filter="url(#glow)">
+      <rect x="50" y="28" width="20" height="8" rx="2"
+            fill="url(#hotMetalGrad)" stroke="#D84315" stroke-width="1.5"/>
+      <!-- Hot spots -->
+      <rect x="52" y="30" width="16" height="2" fill="#FFF3E0" opacity="0.8"/>
+      <ellipse cx="60" cy="32" rx="12" ry="6" fill="#FF9800" opacity="0.3"/>
+    </g>
+
+    <!-- Hammer in Action -->
+    <g transform="translate(60, 20)">
+      <!-- Handle -->
+      <rect x="-2.5" y="-35" width="5" height="40" rx="2.5" fill="#8B4513"/>
+      <line x1="0" y1="-33" x2="0" y2="3" stroke="#654321" stroke-width="0.5" opacity="0.5"/>
+
+      <!-- Head -->
+      <g transform="rotate(-15)">
+        <rect x="-8" y="-8" width="16" height="14" rx="1.5"
+              fill="url(#metalGrad)" stroke="#505050" stroke-width="2"/>
+        <rect x="-8" y="-8" width="16" height="5" fill="#E8E8E8" stroke="#707070" stroke-width="0.8"/>
+        <rect x="-6" y="-7" width="12" height="2" fill="#F5F5F5" opacity="0.7"/>
+        <circle cx="0" cy="2" r="2.5" fill="#606060"/>
+      </g>
+    </g>
+
+    <!-- Sparks from Forging -->
+    <g opacity="0.9" filter="url(#glow)">
+      <circle cx="58" cy="30" r="2" fill="#FFD54F"/>
+      <path d="M 58 30 L 58 27 M 58 30 L 58 33 M 58 30 L 55 30 M 58 30 L 61 30"
+            stroke="#FF9800" stroke-width="1.2" stroke-linecap="round"/>
+
+      <circle cx="65" cy="28" r="1.5" fill="#FFEB3B"/>
+      <path d="M 65 28 L 65 26 M 65 28 L 65 30 M 65 28 L 63 28 M 65 28 L 67 28"
+            stroke="#FFA726" stroke-width="1" stroke-linecap="round"/>
+
+      <circle cx="70" cy="32" r="1.5" fill="#FFB300"/>
+      <path d="M 70 32 L 70 30 M 70 32 L 70 34 M 70 32 L 68 32 M 70 32 L 72 32"
+            stroke="#FF8F00" stroke-width="1" stroke-linecap="round"/>
+
+      <circle cx="54" cy="33" r="1" fill="#FF9800"/>
+      <circle cx="72" cy="30" r="1" fill="#FFD54F"/>
+      <circle cx="56" cy="26" r="0.8" fill="#FFEB3B"/>
+    </g>
+
+    <!-- Forge Fire (background) -->
+    <g transform="translate(60, 80)">
+      <!-- Fire Base -->
+      <ellipse cx="0" cy="0" rx="25" ry="8" fill="#FF5722" opacity="0.3"/>
+
+      <!-- Flames -->
+      <g opacity="0.85" filter="url(#glow)">
+        <!-- Large flame -->
+        <path d="M 0 0 Q -8 -15, -5 -25 Q -2 -30, 0 -32 Q 2 -30, 5 -25 Q 8 -15, 0 0 Z"
+              fill="url(#fireGrad)" stroke="#FF5722" stroke-width="0.5"/>
+
+        <!-- Medium flames -->
+        <path d="M -12 0 Q -16 -10, -14 -18 Q -12 -22, -10 -23 Q -8 -22, -6 -18 Q -4 -10, -12 0 Z"
+              fill="url(#fireGrad)" stroke="#FF5722" stroke-width="0.5" opacity="0.9"/>
+
+        <path d="M 12 0 Q 16 -10, 14 -18 Q 12 -22, 10 -23 Q 8 -22, 6 -18 Q 4 -10, 12 0 Z"
+              fill="url(#fireGrad)" stroke="#FF5722" stroke-width="0.5" opacity="0.9"/>
+
+        <!-- Small flames -->
+        <path d="M -20 0 Q -22 -6, -20 -12 Q -18 -14, -16 -14 Q -14 -12, -16 0 Z"
+              fill="url(#fireGrad)" opacity="0.8"/>
+
+        <path d="M 20 0 Q 22 -6, 20 -12 Q 18 -14, 16 -14 Q 14 -12, 16 0 Z"
+              fill="url(#fireGrad)" opacity="0.8"/>
+      </g>
+
+      <!-- Embers -->
+      <g opacity="0.7">
+        <circle cx="-15" cy="-8" r="1.5" fill="#FFB300"/>
+        <circle cx="15" cy="-10" r="1.2" fill="#FF9800"/>
+        <circle cx="-8" cy="-20" r="1" fill="#FFD54F"/>
+        <circle cx="8" cy="-22" r="1" fill="#FFEB3B"/>
+        <circle cx="0" cy="-28" r="0.8" fill="#FFF3E0"/>
+      </g>
+    </g>
+
+  </g>
+
+  <!-- Text -->
+  <g transform="translate(190, 0)">
+    <text x="0" y="65" font-family="'Segoe UI', 'Arial Black', sans-serif"
+          font-size="42" font-weight="bold" fill="url(#blueGrad)" letter-spacing="-1.5">
+      AiChemist
+    </text>
+    <text x="0" y="102" font-family="'Segoe UI', 'Arial Black', sans-serif"
+          font-size="38" font-weight="bold" fill="#357ABD" letter-spacing="-1">
+      Forge
+    </text>
+    <text x="0" y="128" font-family="'Segoe UI', Arial, sans-serif"
+          font-size="13" fill="#666666" letter-spacing="0.8">
+      MCP Server Development Workspace
+    </text>
+  </g>
+</svg>

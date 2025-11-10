@@ -46,16 +46,14 @@ export const BraveCodeSearchZodSchema = z.object({
     .optional(),
 });
 
-// Check for API key - this needs to be accessible by the execution logic.
-// It's fine for it to be a module-level constant checked once.
-console.error('[TOOLS.TS] About to check BRAVE_API_KEY value.'); // Use console.error
-const BRAVE_API_KEY = process.env.BRAVE_API_KEY!;
-if (!BRAVE_API_KEY) {
-  // Log to stderr and throw to prevent the module from being used incorrectly if key is missing
-  console.error(
-    'CRITICAL: BRAVE_API_KEY environment variable is required for braveSearchTools module.',
-  ); // Use console.error
-  throw new Error('BRAVE_API_KEY environment variable is required.');
+// Helper function to get API key - checks lazily when tools are actually used
+function getBraveApiKey(): string {
+  const apiKey = process.env.BRAVE_API_KEY;
+  if (!apiKey) {
+    console.error('CRITICAL: BRAVE_API_KEY environment variable is required.');
+    throw new Error('BRAVE_API_KEY environment variable is required.');
+  }
+  return apiKey;
 }
 
 // Brave API Free Tier Limits (confirmed from official docs)
@@ -234,7 +232,7 @@ export async function performBraveSearch(
         headers: {
           Accept: 'application/json',
           'Accept-Encoding': 'gzip',
-          'X-Subscription-Token': BRAVE_API_KEY,
+          'X-Subscription-Token': getBraveApiKey(),
         },
       });
 

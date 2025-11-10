@@ -6,7 +6,23 @@ process.stderr.write(
   }\n`,
 );
 
-import 'dotenv/config';
+import { config } from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// Get the directory of the current module (server.ts after compilation)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load .env from the TypeScript project root (two directories up from dist/server/)
+const envPath = join(__dirname, '..', '..', '.env');
+config({ path: envPath });
+
+process.stderr.write(`Loaded .env from: ${envPath}\n`);
+process.stderr.write(
+  `BRAVE_API_KEY after dotenv: ${process.env.BRAVE_API_KEY ? 'LOADED' : 'NOT LOADED'}\n`,
+);
+
 import { log } from '../utils/logger.js'; // Import the logger
 
 // --- Debugging Logs ---
