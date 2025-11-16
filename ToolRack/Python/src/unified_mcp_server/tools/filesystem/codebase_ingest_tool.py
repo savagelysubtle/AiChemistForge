@@ -14,6 +14,8 @@ from typing import Any, Dict, List, Optional
 
 from fastmcp import FastMCP
 
+from unified_mcp_server.utils import retry_on_io_error
+
 # Set up logger for this module following MCP stdio logging guidelines
 logger = logging.getLogger("mcp.tools.codebase_ingest")
 
@@ -235,6 +237,7 @@ def _chunk_content_intelligently(
 def register_codebase_ingest_tool(mcp: FastMCP) -> None:
     """Register the codebase_ingest tool with the FastMCP instance."""
 
+    @retry_on_io_error(max_attempts=3)
     @mcp.tool()
     async def codebase_ingest(
         path: str = ".",

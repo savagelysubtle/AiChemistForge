@@ -8,6 +8,7 @@ A comprehensive Model Context Protocol (MCP) server built with Python 3.13+ and 
 - **Auto-Discovery**: Tools are automatically discovered and registered via registration functions
 - **Type Safety**: Full type hints with Pydantic validation for all tool inputs
 - **Robust Error Handling**: Comprehensive error handling following MCP transport best practices
+- **Automatic Retry Logic**: Smart retry system with exponential backoff for transient errors
 - **Lifecycle Management**: Startup/shutdown hooks for resource management
 - **Metrics & Tracing**: Built-in metrics collection and request tracing (configurable)
 - **Middleware Support**: Rate limiting, timing, and extensible middleware chain
@@ -224,6 +225,7 @@ src/unified_mcp_server/
     ├── caching.py          # LRU cache with TTL
     ├── composition.py      # Tool composition utilities
     ├── exceptions.py       # Custom exception classes
+    ├── retry.py            # Retry logic for tool resilience
     ├── security.py         # Security utilities (path validation, sanitization)
     └── validators.py        # Input validation helpers
 ```
@@ -238,12 +240,14 @@ Tools are automatically discovered via registration functions. To add a new tool
    from pydantic import BaseModel, Field
    from typing import Dict, Any
    import logging
+   from unified_mcp_server.utils import retry_on_io_error  # Add retry logic
 
    logger = logging.getLogger("mcp.tools.my_category")
 
    def register_my_tool(mcp: FastMCP) -> None:
        """Register the my_tool with the FastMCP instance."""
 
+       @retry_on_io_error(max_attempts=3)  # Automatically retry on I/O errors
        @mcp.tool()
        async def my_tool(
            param1: str = Field(description="Description for parameter 1"),
@@ -279,6 +283,54 @@ Tools are automatically discovered via registration functions. To add a new tool
 
    __all__ = ["register_my_tool"]
    ```
+
+### Retry System
+
+The server includes an automatic retry system for handling transient errors. Tools automatically retry up to 3 times with exponential backoff when encountering transient errors like I/O failures or network issues.
+
+**Supported Retry Decorators:**
+
+```python
+from unified_mcp_server.utils import (
+    tool_retry,           # General purpose retry for tools
+    retry_on_io_error,    # Retry on filesystem errors
+    retry_on_network_error, # Retry on network errors
+    with_retry,           # Advanced configuration
+    RetryStrategy         # Backoff strategies
+)
+
+# Simple retry (default: 3 attempts, exponential backoff)
+@tool_retry(max_attempts=3)
+@mcp.tool()
+async def my_tool(...): ...
+
+# I/O-specific retry
+@retry_on_io_error(max_attempts=3)
+@mcp.tool()
+async def file_tool(...): ...
+
+# Network-specific retry
+@retry_on_network_error(max_attempts=5)
+@mcp.tool()
+async def api_tool(...): ...
+
+# Advanced configuration
+@with_retry(
+    max_attempts=5,
+    initial_delay=2.0,
+    strategy=RetryStrategy.EXPONENTIAL,
+    backoff_multiplier=2.0
+)
+@mcp.tool()
+async def complex_tool(...): ...
+```
+
+**Retry Behavior:**
+- **Retryable Errors**: OSError, ConnectionError, TimeoutError, PermissionError
+- **Non-Retryable Errors**: ValueError, TypeError, KeyError (validation/logic errors)
+- **Backoff Strategies**: Exponential (default), Linear, Fixed
+
+See [`docs/RETRY_SYSTEM.md`](docs/RETRY_SYSTEM.md) for comprehensive documentation.
 
 ### Testing
 

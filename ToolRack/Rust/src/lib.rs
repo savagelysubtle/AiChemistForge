@@ -5,6 +5,7 @@ pub mod fs_service;
 pub mod cli;
 pub mod error;
 pub mod task_state;
+pub mod retry;
 
 pub use handler::MyServerHandler;
 pub use fs_service::FileSystemService;
@@ -13,3 +14,6 @@ pub use task_state::*;
 
 // Re-export task state functions for use in tools
 pub use task_state::{get_current_mode, add_workflow_step, complete_current_mode, get_available_operation_modes, get_operation_mode_tools, start_operation_mode};
+
+// Re-export retry functionality for use in tools
+pub use retry::{RetryConfig, RetryStrategy, retry_3x, retry_io_operation, retry_with_config};

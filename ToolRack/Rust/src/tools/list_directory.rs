@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use crate::mcp_types::{CallToolResult, Content, TextContent, CallToolError};
 use crate::fs_service::FileSystemService;
 use crate::fs_service::utils::format_bytes;
+use crate::retry::retry_3x;
 use std::path::Path;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -13,12 +14,19 @@ pub struct ListDirectoryTool {
 }
 
 impl ListDirectoryTool {
-    
+
 
     pub async fn run_tool(self, fs_service: &FileSystemService) -> Result<CallToolResult, CallToolError> {
         let show_detailed = self.detailed.unwrap_or(false);
 
-        match fs_service.list_directory(Path::new(&self.path)).await {
+        // Retry up to 3 times on transient I/O errors
+        let path = self.path.clone();
+        match retry_3x("list_directory", || {
+            let p = path.clone();
+            async move {
+                fs_service.list_directory(Path::new(&p)).await
+            }
+        }).await {
             Ok(entries) => {
                 if entries.is_empty() {
                     return Ok(CallToolResult {

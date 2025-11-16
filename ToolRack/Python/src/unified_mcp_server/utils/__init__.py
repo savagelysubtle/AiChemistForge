@@ -5,6 +5,7 @@ This module contains essential utility functions and classes for:
 - Input validation
 - Security and path validation
 - Exception handling
+- Retry logic for tool resilience
 - Basic caching (if needed)
 
 The complex tool composition and registry systems have been removed
@@ -25,6 +26,15 @@ from .exceptions import (
     ValidationError,
     # Convenience functions
     validation_failed,
+)
+from .retry import (
+    RetryConfig,
+    RetryStrategy,
+    retry_async,
+    retry_on_io_error,
+    retry_on_network_error,
+    tool_retry,
+    with_retry,
 )
 from .security import (
     HashUtils,
@@ -67,6 +77,14 @@ __all__ = [
     "ValidationError",
     "InputValidationError",
     "validation_failed",
+    # Retry logic
+    "RetryConfig",
+    "RetryStrategy",
+    "with_retry",
+    "tool_retry",
+    "retry_on_io_error",
+    "retry_on_network_error",
+    "retry_async",
     # Security
     "PathSecurity",
     "InputSanitizer",

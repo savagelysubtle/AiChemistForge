@@ -1,0 +1,39 @@
+   Compiling aichemistforge-mcp-server v0.1.0 (D:\Coding\AiChemistCodex\AiChemistForge\ToolRack\Rust)
+error[E0432]: unresolved import `crate::retry`
+ --> src\tools\directory_tree.rs:4:12
+  |
+4 | use crate::retry::retry_3x;
+  |            ^^^^^
+  |            |
+  |            unresolved import
+  |            help: a similar path exists: `aichemistforge_mcp_server::retry`
+
+error[E0432]: unresolved import `crate::retry`
+ --> src\tools\read_file.rs:4:12
+  |
+4 | use crate::retry::retry_3x;
+  |            ^^^^^
+  |            |
+  |            unresolved import
+  |            help: a similar path exists: `aichemistforge_mcp_server::retry`
+
+error[E0432]: unresolved import `crate::retry`
+ --> src\tools\write_file.rs:4:12
+  |
+4 | use crate::retry::retry_3x;
+  |            ^^^^^
+  |            |
+  |            unresolved import
+  |            help: a similar path exists: `aichemistforge_mcp_server::retry`
+
+error[E0432]: unresolved import `crate::retry`
+ --> src\tools\list_directory.rs:5:12
+  |
+5 | use crate::retry::retry_3x;
+  |            ^^^^^
+  |            |
+  |            unresolved import
+  |            help: a similar path exists: `aichemistforge_mcp_server::retry`
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `aichemistforge-mcp-server` (bin "aichemistforge-mcp-server") due to 4 previous errors

@@ -6,6 +6,7 @@ mod error;
 mod mcp_types;
 mod server;
 mod task_state;
+mod retry;
 
 use handler::MyServerHandler;
 use cli::CommandArguments;

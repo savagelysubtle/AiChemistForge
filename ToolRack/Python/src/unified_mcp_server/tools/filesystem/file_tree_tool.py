@@ -23,6 +23,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from fastmcp import FastMCP
 
+from unified_mcp_server.utils import retry_on_io_error
+
 # Set up logger for this module following MCP stdio logging guidelines
 logger = logging.getLogger("mcp.tools.file_tree")
 
@@ -227,6 +229,7 @@ def _format_file_info(
 def register_file_tree_tool(mcp: FastMCP) -> None:
     """Register the file_tree tool with the FastMCP instance."""
 
+    @retry_on_io_error(max_attempts=3)
     @mcp.tool()
     async def file_tree(
         path: str = ".",
